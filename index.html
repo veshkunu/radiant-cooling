@@ -13,9 +13,10 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
 button{font:inherit}
-.app{height:100vh;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 0,#172b47 0,#08111f 55%)}
-.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(8,17,31,.84);backdrop-filter:blur(14px);position:relative;z-index:30}
-.brand{display:flex;gap:12px;align-items:center;font-weight:800;letter-spacing:.02em}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 0,#172b47 0,#08111f 55%)}
+.topbar{flex:none;height:64px;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(8,17,31,.84);backdrop-filter:blur(14px);position:relative;z-index:30}
+.brand{display:flex;gap:12px;align-items:center;font-weight:800;letter-spacing:.02em;min-width:0;white-space:nowrap}
+.brand .short{display:none}
 .brand .dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 18px var(--accent)}
 .actions{display:flex;gap:8px;align-items:center}
 .btn{border:1px solid rgba(255,255,255,.12);background:#132238;color:var(--text);padding:9px 13px;border-radius:10px;cursor:pointer}
@@ -24,10 +25,12 @@ button{font:inherit}
 .viewtoggle{display:flex;border:1px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;margin-right:6px}
 .viewtoggle button{border:0;background:#0f1d30;color:#9fb0c5;padding:9px 12px;font-size:12px;font-weight:700;letter-spacing:.06em;cursor:pointer}
 .viewtoggle button.on{background:#22395c;color:#fff}
-.stage{height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:18px;overflow:hidden}
+.stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:18px;overflow:hidden}
 .board-wrap{width:min(1500px,100%);height:min(820px,100%);position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);background:#fff;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
 .board-wrap.view-3d{background:#0b1524}
-.schematic{position:absolute;inset:0;transform-origin:50% 50%;transition:transform .75s cubic-bezier(.2,.8,.2,1)}
+/* schematic keeps the 1600x872 aspect ratio at any screen shape (hotspot % stay aligned) */
+.board-wrap{container-type:size}
+.schematic{position:absolute;inset:0;margin:auto;width:min(100cqw,calc(100cqh * 1600 / 872));height:min(100cqh,calc(100cqw * 872 / 1600));transform-origin:50% 50%;transition:transform .75s cubic-bezier(.2,.8,.2,1)}
 .board{position:absolute;inset:0;background:#fff center/100% 100% no-repeat}
 .overlay-dim{position:absolute;inset:0;background:rgba(2,7,16,.28);pointer-events:none;opacity:0;transition:.3s;z-index:5}
 .hotspot{position:absolute;border:1.5px solid transparent;background:rgba(181,92,255,0);border-radius:12px;cursor:pointer;z-index:8;transition:.2s}
@@ -69,7 +72,11 @@ button{font:inherit}
 .loading3d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9fb0c5;font-size:13px;letter-spacing:.08em}
 
 .flow-panel{position:absolute;left:14px;top:14px;z-index:20;width:232px;padding:12px;border-radius:14px;background:rgba(9,18,32,.88);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px);font-size:12px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-.fp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.fp-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:9px}
+.fp-head b{flex:1}
+.fp-toggle{border:1px solid rgba(255,255,255,.12);background:#132238;color:#c9d5e5;width:26px;height:22px;border-radius:6px;cursor:pointer;font-size:11px;line-height:1;padding:0;transition:transform .2s}
+.flow-panel.collapsed .fp-body{display:none}
+.flow-panel.collapsed .fp-toggle{transform:rotate(-90deg)}
 .fp-head b{font-size:11px;letter-spacing:.14em;color:#c9d5e5}
 .fp-state{font:600 9.5px/1 ui-monospace,Consolas,monospace;color:#8fe6ff;background:rgba(53,208,255,.1);padding:4px 6px;border-radius:5px}
 .fp-row{display:flex;gap:5px}
@@ -123,33 +130,88 @@ button{font:inherit}
 .toast{position:absolute;left:50%;top:82px;transform:translate(-50%,-20px);z-index:50;background:#132238;border:1px solid rgba(255,255,255,.12);padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.3s}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-.fullscreen .topbar{display:none}.fullscreen .stage{height:100vh}.fullscreen .board-wrap{width:100vw;height:100vh;border-radius:0}
+.fullscreen .topbar{display:none}.fullscreen .stage{padding:0}.fullscreen .board-wrap{width:100vw;height:100%;border-radius:0}
 
 @media(max-width:1100px){
  .caption{top:auto;bottom:64px;max-width:calc(100% - 28px)}
+ .brand .full{display:none}.brand .short{display:inline}
 }
 @media(max-width:900px){
  .hint{display:none}
- .board-wrap{height:70vh}
  .panel{top:74px}
  .brand{font-size:13px}
  .flow-panel{width:196px;padding:9px;font-size:11px}
  .legend{display:none}
+}
+/* ---------- Phones (portrait) ---------- */
+@media(max-width:760px){
+ .topbar{height:auto;flex-wrap:wrap;padding:8px 10px;gap:8px}
+ .brand{flex:1 1 auto;font-size:14px;gap:8px}
+ .actions{flex:1 1 100%;flex-wrap:wrap;gap:6px}
+ .actions .btn{flex:1 1 0;padding:9px 6px;font-size:12.5px;white-space:nowrap;min-height:38px}
+ .actions .btn .lbl-txt{display:none}
+ #flowBtn{flex:2 1 0}
+ .viewtoggle{order:2;flex:1 1 100%;margin:0}
+ .viewtoggle button{flex:1;padding:9px 6px;font-size:11.5px;min-height:36px}
+ .stage{padding:8px}
+ .board-wrap{width:100%;height:100%;border-radius:12px}
+ .board-wrap.view-schematic{background:#0b1524}
+ .schematic{margin:0 auto}
+ .flow-panel{left:8px;top:8px;width:min(230px,calc(100% - 16px));padding:8px 9px}
+ .flow-panel.collapsed .fp-head{margin-bottom:7px}
+ .fp-row button,.seg button{padding:8px 3px;font-size:11.5px}
+ .fp-foot{display:none}
+ .caption{left:8px;right:8px;transform:none;max-width:none;min-width:0;bottom:54px;font-size:12px;padding:7px 10px}
+ .controls{left:8px;right:8px;bottom:8px;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+ .controls::-webkit-scrollbar{display:none}
+ .pill{flex:none;padding:8px 11px;font-size:12px;white-space:nowrap}
+ .debug-hud{left:8px;right:8px;top:auto;bottom:54px;max-width:none;max-height:40%;font-size:9.5px}
+ .panel{left:8px;right:8px;top:auto;bottom:8px;width:auto;max-height:60%;border-radius:14px;transform:translateY(calc(100% + 20px))}
+ .panel.open{transform:translateY(0)}
+ .panel-head{padding:12px 14px 9px}
+ .panel h2{font-size:18px}
+ .panel-body{padding:12px 14px;max-height:calc(60dvh - 70px)}
+ .metric-grid{gap:7px;margin:10px 0}.metric{padding:8px}.metric b{font-size:15px}
+ .section{margin-top:12px}
+ .toast{top:auto;bottom:70px;max-width:calc(100% - 24px);text-align:center;font-size:13px}
+ .start-card{padding:26px 20px}
+ .start-card .big{width:100%}
+ .lbl{font-size:9px;padding:2px 5px}
+ .lbl-node{font-size:9.5px}
+ .lbl-detail,.lbl-zone,.lbl-sep{display:none}
+ .lbl-note{max-width:170px;font-size:10px}
+}
+/* ---------- Phones (landscape): one compact row ---------- */
+@media(max-height:500px) and (orientation:landscape){
+ .topbar{height:auto;flex-wrap:nowrap;padding:5px 10px;gap:8px}
+ .brand .full,.brand .short{display:none}
+ .actions{flex:1 1 auto;flex-wrap:nowrap;justify-content:flex-end;gap:6px}
+ .actions .btn{padding:7px 9px;font-size:12px;white-space:nowrap}
+ .actions .btn .lbl-txt{display:none}
+ .viewtoggle{margin:0}
+ .viewtoggle button{padding:7px 9px;font-size:11px}
+ .stage{padding:6px}
+ .board-wrap{width:100%;height:100%;border-radius:10px}
+ .flow-panel{top:6px;left:6px;padding:7px 8px}
+ .caption{top:auto;bottom:50px;left:auto;right:8px;transform:none;min-width:0;max-width:52%;font-size:11.5px;padding:6px 10px}
+ .panel{top:auto;bottom:6px;max-height:88%}
+ .panel-body{max-height:calc(88dvh - 80px)}
+ .lbl-detail,.lbl-zone,.lbl-sep{display:none}
 }
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header class="topbar">
-    <div class="brand"><span class="dot"></span> Radiant Cooling System — Interactive Presentation</div>
+    <div class="brand"><span class="dot"></span><span class="full">Radiant Cooling System — Interactive Presentation</span><span class="short">Radiant Cooling</span></div>
     <div class="actions">
       <div class="viewtoggle" role="tablist">
         <button class="on" data-view="3d" role="tab">3D VIEW</button>
         <button data-view="schematic" role="tab">SCHEMATIC VIEW</button>
       </div>
       <button class="btn" id="flowBtn">▶ Flow Mode</button>
-      <button class="btn" id="resetBtn">↺ Reset</button>
-      <button class="btn" id="fullBtn">⛶ Fullscreen</button>
+      <button class="btn" id="resetBtn" aria-label="Reset" title="Reset">↺<span class="lbl-txt"> Reset</span></button>
+      <button class="btn" id="fullBtn" aria-label="Fullscreen" title="Fullscreen">⛶<span class="lbl-txt"> Fullscreen</span></button>
     </div>
   </header>
 
@@ -178,12 +240,13 @@ button{font:inherit}
 
       <!-- Flow controls (3D view) -->
       <div class="flow-panel" id="flowPanel">
-        <div class="fp-head"><b>FLOW MODE</b><span class="fp-state" id="fpState">IDLE</span></div>
+        <div class="fp-head"><b>FLOW MODE</b><span class="fp-state" id="fpState">IDLE</span><button class="fp-toggle" id="fpToggle" aria-label="Show or hide flow options" title="Options">▾</button></div>
         <div class="fp-row">
           <button class="go" id="fpStart">▶ Start</button>
           <button id="fpPause">⏸ Pause</button>
           <button id="fpRestart">↻ Restart</button>
         </div>
+        <div class="fp-body">
         <div class="fp-label">System</div>
         <div class="seg" data-group="system">
           <button class="on" data-v="both">Both</button><button data-v="S1">System 1</button><button data-v="S2">System 2</button>
@@ -198,6 +261,7 @@ button{font:inherit}
         </div>
         <label class="fp-check"><input type="checkbox" id="fpFollow"> Follow flow (auto camera)</label>
         <div class="fp-foot">F start/pause · R reset · D debug</div>
+        </div>
       </div>
       <div class="caption" id="caption"></div>
       <div class="legend" id="legend"></div>
@@ -432,6 +496,11 @@ document.getElementById("flowBtn").addEventListener("click",()=>{
   if(view!=="3d") setView("3d");
   window.RC3D.toggleFlow();
 });
+/* Phones: flow options start collapsed; hide Fullscreen where the browser can't do it (iPhone Safari). */
+const flowPanel=document.getElementById("flowPanel");
+if(matchMedia("(max-width:760px), (max-height:500px)").matches) flowPanel.classList.add("collapsed");
+document.getElementById("fpToggle").addEventListener("click",()=>flowPanel.classList.toggle("collapsed"));
+if(!document.fullscreenEnabled) document.getElementById("fullBtn").style.display="none";
 document.getElementById("fullBtn").addEventListener("click",async()=>{
   const app=document.getElementById("app");
   if(!document.fullscreenElement) await app.requestFullscreen?.();
@@ -867,7 +936,7 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 controls.maxPolarAngle = Math.PI * 0.495;
 controls.minDistance = 3;
-controls.maxDistance = 70;
+controls.maxDistance = 140;
 
 scene.add(new THREE.HemisphereLight(0xdfeaff, 0x1a2433, 1.15));
 const sun = new THREE.DirectionalLight(0xffffff, 1.5); sun.position.set(10, 22, 14); scene.add(sun);
@@ -1559,11 +1628,26 @@ function updateHighlights(time) {
 class CameraRig {
   constructor(cam, ctl) { this.cam = cam; this.ctl = ctl; this.tw = null; }
   flyTo(pos, target, dur = 1.2) { this.tw = { t: 0, dur, p0: this.cam.position.clone(), p1: pos.clone(), q0: this.ctl.target.clone(), q1: target.clone() }; }
-  preset(name) { const p = CAMERA_PRESETS[name]; if (p) this.flyTo(v3(p.pos), v3(p.target)); }
+  /* Narrow / portrait screens need the camera further back to fit the same scene width. */
+  /* Portrait phones: the plant is laid out along X, so look along X (rotate presets 90°) and the long axis runs down the screen. */
+  get portrait() { return this.cam.aspect < 0.8; }
+  fit() {
+    if (this.portrait) return 1.4;
+    return clamp((1.75 / this.cam.aspect) * Math.tan(THREE.MathUtils.degToRad(20)) / Math.tan(THREE.MathUtils.degToRad(this.cam.fov / 2)), 1, 3);
+  }
+  presetPose(name) {
+    const p = CAMERA_PRESETS[name]; if (!p) return null;
+    const target = v3(p.target);
+    const off = v3(p.pos).sub(target);
+    if (this.portrait) off.set(off.z, off.y, -off.x); // rotate +90° about Y: camera sits on the +X side
+    return { pos: off.multiplyScalar(this.fit()).add(target), target };
+  }
+  preset(name) { const p = this.presetPose(name); if (p) this.flyTo(p.pos, p.target); }
+  jumpTo(name) { const p = this.presetPose(name); if (!p) return; this.tw = null; this.cam.position.copy(p.pos); this.ctl.target.copy(p.target); }
   frameBox(box, { min = 6, max = 26, gentle = false } = {}) {
     if (box.isEmpty()) return;
     const c = box.getCenter(new THREE.Vector3()); const size = box.getSize(new THREE.Vector3()).length();
-    const dist = clamp(size * 1.25, gentle ? 9 : min, max);
+    const dist = clamp(size * 1.25, gentle ? 9 : min, max) * this.fit();
     const dir = this.cam.position.clone().sub(this.ctl.target).normalize();
     if (dir.y < 0.4) { dir.y = 0.5; dir.normalize(); }
     const target = gentle ? this.ctl.target.clone().lerp(c, 0.75) : c;
@@ -1578,7 +1662,8 @@ class CameraRig {
   }
 }
 const rig = new CameraRig(camera, controls);
-controls.addEventListener('start', () => rig.cancel()); // presenter always wins
+let userMovedCamera = false;
+controls.addEventListener('start', () => { rig.cancel(); userMovedCamera = true; }); // presenter always wins
 
 /* =====================================================================
    9. FLOW CONTROLLER — one state machine for all flow animation
@@ -1825,7 +1910,10 @@ let visible3d = true;
 function resize() {
   const w = container.clientWidth, h = container.clientHeight; if (!w || !h) return;
   renderer.setSize(w, h); labelRenderer.setSize(w, h);
-  camera.aspect = w / h; camera.updateProjectionMatrix();
+  camera.aspect = w / h;
+  camera.fov = camera.aspect < 1 ? 52 : 40;
+  camera.updateProjectionMatrix();
+  if (!userMovedCamera && !rig.tw) rig.jumpTo('overview'); // re-fit on resize/rotate until the presenter moves the camera
 }
 new ResizeObserver(resize).observe(container);
 window.addEventListener('rc:view', e => { visible3d = e.detail === '3d'; if (!visible3d) clearFocus(); resize(); });
